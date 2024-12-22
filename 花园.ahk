@@ -7,9 +7,12 @@ global IsGarden = 0
 global StopExecution := false
 
 
-; 定时器：每秒检测是否在花园界面
-SetTimer, CheckGarden, 1000
+
+SetTimer, CheckGarden, 1000 ; 定时器：每秒检测是否在花园界面
+SetTimer, CheckStop, 5000 ; 定时器：每秒检测是否按0
 return
+
+
 
 CheckGarden:
 ; 搜索花园界面独有的水壶图标
@@ -19,6 +22,47 @@ if (ErrorLevel = 0)
 else
     IsGarden := 0 ; 未找到,标志为假
 return
+
+CheckStop:
+if (StopExecution) 
+{
+    Sleep, 4000 ; 中断1秒
+    if (StopExecution)
+    {
+        StopExecution := false ; 中断结束
+    }
+}
+return
+
+
+SearchAndClick(){
+    loop{
+
+        if (StopExecution) ; 检查是否关闭
+            break
+
+        ; 搜索图片的位置
+        ImageSearch, x, y, 0, 0, A_ScreenWidth, A_ScreenHeight, *100 lihe.png
+        if (ErrorLevel = 0) ; 如果找到目标图片
+        {
+            ; 点击图片所在的位置
+            MouseMove, %x%, %y%, 0
+            Click
+            Sleep, 1000 ;
+            break
+        }
+
+        ImageSearch, x, y, 0, 0, A_ScreenWidth, A_ScreenHeight, *50 开始战斗.png
+        if (ErrorLevel = 0) ; 如果找到目标图片
+        {
+            ; 点击图片所在的位置
+            MouseMove, %x%, %y%, 0
+            Click
+            Sleep, 1000 ;
+            break
+        }
+    }
+}
 
 ; 定义中断快捷键
 0::
@@ -95,10 +139,7 @@ if (IsGarden = 1) ; 仅在花园界面生效
         MsgBox, 4, 选择框, 即将卖掉你该页的全部植物,是否确认操作？ ; 显示是/否按钮
         ifMsgBox, Yes
             CallPlantsSelling() ; 贩卖位置
-    else if (A_ThisHotkey = "^7")
-        CallPlants(1035, 110) ; 手推车位置
-    else if (A_ThisHotkey = "^8")
-        CallPlants(1150, 110) ; 放大镜位置
+    
 
 
     ; 返回原来的位置并对植物使用道具
@@ -134,6 +175,71 @@ if (IsGarden = 1)
     MouseMove, xPos, yPos , 0 ; 返回原来的鼠标位置
 }
 return
+
+L:: ; 持续刷植物
+shuaBefore()
+Loop
+    {
+        if (StopExecution) ; 检查是否关闭
+        {
+            StopExecution := false
+            MsgBox, 已停止自动刷植物 ;
+            break
+        }
+        
+        SearchAndClick() ; 调用匹配函数
+
+        if (StopExecution) ; 检查是否关闭
+        {
+            StopExecution := false
+            MsgBox, 已停止! ;
+            break
+        }
+        shuaAfter()
+
+        if (StopExecution) ; 检查是否关闭
+        {
+            StopExecution := false
+            MsgBox, 已停止! ;
+            break
+        }
+
+        shuaBefore()
+    }
+return
+
+M:: ; 持续刷植物2
+shuaBefore2()
+Loop
+    {
+        if (StopExecution) ; 检查是否关闭
+        {
+            StopExecution := false
+            MsgBox, 已停止自动刷植物 ;
+            break
+        }
+        
+        SearchAndClick() ; 调用匹配函数
+
+        if (StopExecution) ; 检查是否关闭
+        {
+            StopExecution := false
+            MsgBox, 已停止! ;
+            break
+        }
+        shuaAfter()
+
+        if (StopExecution) ; 检查是否关闭
+        {
+            StopExecution := false
+            MsgBox, 已停止! ;
+            break
+        }
+
+        shuaBefore2()
+    }
+return
+
 
 CallPlants(toolX, toolY) ; 循环点击植物
 {
@@ -221,12 +327,119 @@ CallPlantsSelling() ; 循环点击植物
 }
 
 
+k:: ;刷植物
+shuaAfter()
+shuaBefore()
+
+return
+
+j:: ;刷植物（从头开始）
+
+shuaBefore()
+
+return
 
 
 
+shuaBefore()
+{
+    ; 选卡
+    MouseMove, 370, 270 ,0 ;
+    Click ;
+    MouseMove, 520, 300 ,0 ;
+    Click ;
+    MouseMove, 711, 950 ,0 ;
+    Click ;
+    Sleep, 1500  ;
+    ; 放豌豆射手
+    MouseMove, 460, 100 ,0 ;
+    Click ;
+    MouseMove, 460, 230 ,0 ;
+    Click ;
+    MouseMove, 460, 100 ,0 ;
+    Click ;
+    MouseMove, 620, 230 ,0 ;
+    Click ;
+    ; 放樱桃炸弹
+    MouseMove, 540, 100 ,0 ;
+    Click ;
+    MouseMove, 460, 230 ,0 ;
+    Click ;
+    MouseMove, 540, 100 ,0 ;
+    Click ;
+    MouseMove, 620, 230 ,0 ;
+    Click ;
+    MouseMove, 540, 100 ,0 ;
+    Click ;
+    MouseMove, 460, 230 ,0 ;
+    Click ;
+    MouseMove, 540, 100 ,0 ;
+    Click ;
+    MouseMove, 620, 230 ,0 ;
+    Click ;
+    ; 开始战斗
+    MouseMove, 950, 1000 ,0 ;
+    Click ;
+}
 
-^k:: ;刷植物
-if (IsGarden = 1) ; 仅在花园界面生效
+
+
+shuaBefore2()
+{
+    ; 选卡
+    MouseMove, 520, 500 ,0 ;
+    Click ;
+    MouseMove, 690, 500 ,0 ;
+    Click ;
+    Sleep, 50 ;
+    MouseMove, 610, 270 ,0 ;
+    Click ;
+    MouseMove, 920, 270 ,0 ;
+    Click ;
+    MouseMove, 711, 950 ,0 ;
+    Click ;
+    Sleep, 1500  ;
+    ; 放置植物
+    MouseMove, 460, 100 ,0 ; 三线射手
+    Click ;
+    MouseMove, 460, 230 ,0 ;
+    Click ;
+    MouseMove, 540, 100 ,0 ;辣椒
+    Click ;
+    MouseMove, 460, 230 ,0 ;
+    Click ;
+    MouseMove, 540, 100 ,0 ;
+    Click ;
+    MouseMove, 460, 230 ,0 ;
+    Click ;
+    MouseMove, 600, 100 ,0 ; 坚果
+    Click ;
+    MouseMove, 1420, 230 ,0 ;
+    Click ;
+    MouseMove, 600, 100 ,0 ; 坚果
+    Click ;
+    MouseMove, 1560, 230 ,0 ;
+    Click ;
+    MouseMove, 600, 100 ,0 ; 坚果
+    Click ;
+    MouseMove, 1710, 230 ,0 ;
+    Click ;
+    
+    Click ;
+    ; 开始战斗
+    MouseMove, 950, 1000 ,0 ;
+    Click ;
+    Sleep, 2500 ;
+    ; 辣椒
+    MouseMove, 540, 100 ,0 ;
+    Click ;
+    MouseMove, 460, 230 ,0 ;
+    Click ;
+
+
+}
+
+shuaAfter()
 {
     ; 暂停并返回到选卡界面
     Send, {Esc};
@@ -238,85 +451,10 @@ if (IsGarden = 1) ; 仅在花园界面生效
     MouseMove, 810, 715 ,0 ;
     Click ;
     Sleep, 500  ;
-    ; 选卡
-    MouseMove, 370, 270 ,0 ;
-    Click ;
-    MouseMove, 520, 300 ,0 ;
-    Click ;
-    MouseMove, 711, 950 ,0 ;
-    Click ;
-    Sleep, 1500  ;
-    ; 放豌豆射手
-    MouseMove, 460, 100 ,0 ;
-    Click ;
-    MouseMove, 460, 230 ,0 ;
-    Click ;
-    MouseMove, 460, 100 ,0 ;
-    Click ;
-    MouseMove, 620, 230 ,0 ;
-    Click ;
-    ; 放樱桃炸弹
-    MouseMove, 540, 100 ,0 ;
-    Click ;
-    MouseMove, 460, 230 ,0 ;
-    Click ;
-    MouseMove, 540, 100 ,0 ;
-    Click ;
-    MouseMove, 620, 230 ,0 ;
-    Click ;
-    MouseMove, 540, 100 ,0 ;
-    Click ;
-    MouseMove, 460, 230 ,0 ;
-    Click ;
-    MouseMove, 540, 100 ,0 ;
-    Click ;
-    MouseMove, 620, 230 ,0 ;
-    Click ;
-    ; 开始战斗
-    MouseMove, 950, 1000 ,0 ;
-    Click ;
 }
-return
 
-^j:: ;刷植物（从头开始）
-if (IsGarden = 1) ; 仅在花园界面生效
-{
-    ; 选卡
-    MouseMove, 370, 270 ,0 ;
-    Click ;
-    MouseMove, 520, 300 ,0 ;
-    Click ;
-    MouseMove, 711, 950 ,0 ;
-    Click ;
-    Sleep, 1500  ;
-    ; 放豌豆射手
-    MouseMove, 460, 100 ,0 ;
-    Click ;
-    MouseMove, 460, 230 ,0 ;
-    Click ;
-    MouseMove, 460, 100 ,0 ;
-    Click ;
-    MouseMove, 620, 230 ,0 ;
-    Click ;
-    ; 放樱桃炸弹
-    MouseMove, 540, 100 ,0 ;
-    Click ;
-    MouseMove, 460, 230 ,0 ;
-    Click ;
-    MouseMove, 540, 100 ,0 ;
-    Click ;
-    MouseMove, 620, 230 ,0 ;
-    Click ;
-    MouseMove, 540, 100 ,0 ;
-    Click ;
-    MouseMove, 460, 230 ,0 ;
-    Click ;
-    MouseMove, 540, 100 ,0 ;
-    Click ;
-    MouseMove, 620, 230 ,0 ;
-    Click ;
-    ; 开始战斗
-    MouseMove, 950, 1000 ,0 ;
-    Click ;
-}
+
+#If ; 恢复全局作用域
+
+^0:: ExitApp ; 按下 Ctrl + 0 键退出脚本
 return
